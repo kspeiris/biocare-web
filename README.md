@@ -28,10 +28,6 @@ Implemented in this repository:
 - Inquiry and contact forms collecting:
   - Contact fields: name, email, phone, company, subject, message.
   - Inquiry-specific fields (Inquire.jsx): products, businessType, deliveryTimeline, targetMarket, etc.
-- Accessible contact info visible in multiple places:
-  - Email: biocarecons@gmail.com 
-  - Phone: +94 710 733 1100 
-  - Address: No. 104/C, Samagi Mawatha, Kaludewala, Panadura, Sri Lanka 
 
 
 ## System Architecture
