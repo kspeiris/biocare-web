@@ -30,7 +30,7 @@ const Header = () => {
                   alt="Bio Care Logo" 
                   className="h-12 w-auto max-w-32 object-contain"
                   onError={(e) => {
-                    // Fallback if logo doesn't exist
+                    
                     e.target.style.display = 'none'
                     e.target.nextSibling.style.display = 'flex'
                   }}

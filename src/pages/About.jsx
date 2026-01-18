@@ -119,7 +119,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Enhanced Hero Section */}
+      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-900 via-green-800 to-green-700 py-24 text-white overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-64 h-64 bg-green-600/20 rounded-full blur-3xl"></div>
@@ -245,7 +245,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Enhanced Timeline */}
+      {/* Timeline */}
       <section className="py-20 bg-gradient-to-b from-green-50 to-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -302,7 +302,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Enhanced Team Section */}
+      {/* Team Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -403,7 +403,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Contact CTA - FIXED WITH LINK COMPONENTS */}
+      {/* Contact CTA -WITH LINK COMPONENTS */}
       <section className="py-16 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-black mb-6">

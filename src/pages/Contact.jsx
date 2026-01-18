@@ -198,7 +198,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Enhanced Header */}
+        {/* Header */}
         <div className="text-center mb-16 fade-in">
           <div className="flex justify-center mb-6">
             <div className="bg-green-600 p-4 rounded-2xl shadow-lg">
@@ -215,7 +215,7 @@ const Contact = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Enhanced Contact Information */}
+          {/* Contact Information */}
           <div className="lg:col-span-1 fade-in">
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-green-100">
               <h2 className="text-2xl font-black text-gray-900 mb-8 flex items-center gap-2">
@@ -241,7 +241,7 @@ const Contact = () => {
                 ))}
               </div>
 
-              {/* Quick Actions - FIXED WITH LINK COMPONENTS */}
+              {/* Quick Actions -WITH LINK COMPONENTS */}
               <div className="mt-8 space-y-3">
                 <Link
                   to="/inquire"
@@ -259,7 +259,7 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Enhanced Contact Form */}
+          {/* Contact Form */}
           <div className="lg:col-span-2 fade-in">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-green-100">
               <h2 className="text-2xl font-black text-gray-900 mb-8">Send us a Message</h2>

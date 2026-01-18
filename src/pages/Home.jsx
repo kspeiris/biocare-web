@@ -38,7 +38,7 @@ const Home = () => {
     return () => clearInterval(interval)
   }, [])
 
-  // Enhanced product data with better images
+  // product data with images
   const featuredProducts = [
     {
       id: 1,
@@ -213,7 +213,7 @@ const Home = () => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  // Fixed Quick View Function
+  // Quick View Function
   const handleQuickView = (product) => {
     setSelectedProduct(product)
     setShowQuickView(true)
@@ -310,7 +310,7 @@ const Home = () => {
         </div>
       )}
 
-      {/* Enhanced Hero Section with Background Image */}
+      {/* Hero Section with Background Image */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
@@ -342,7 +342,7 @@ const Home = () => {
             </div>
           </div>
           
-          {/* Enhanced Headline */}
+          {/* Headline */}
           <div className="space-y-6 mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Sparkles className="h-8 w-8 text-green-300" />
@@ -367,7 +367,7 @@ const Home = () => {
             </p>
           </div>
           
-          {/* Enhanced CTA Buttons */}
+          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
             <button
               onClick={() => scrollToSection('products')}
@@ -405,7 +405,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Enhanced Stats Section */}
+      {/* Stats Section */}
       <section className="py-20 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-blue-50 opacity-30"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -467,7 +467,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Enhanced Featured Products - Image Focused */}
+      {/* Featured Products - Image Focused */}
       <section id="products" className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
@@ -553,7 +553,7 @@ const Home = () => {
             ))}
           </div>
 
-          {/* Enhanced View All CTA */}
+          {/* View All CTA */}
           <div className="text-center mt-16">
             <Link
               to="/products"
@@ -566,8 +566,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Certificates Section - Added Back */}
-     {/* Certificates Section - 2 per line with landscape size */}
+      
 <section className="py-24 bg-gradient-to-b from-green-50 to-white">
   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className="text-center mb-16">
@@ -583,14 +582,14 @@ const Home = () => {
       </p>
     </div>
 
-    {/* Changed to 2 columns for larger certificates */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8"> {/* Changed from lg:grid-cols-4 to md:grid-cols-2 */}
+   
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8"> 
       {certificates.map((certificate) => (
         <div
           key={certificate.id}
           className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-blue-200 transform hover:-translate-y-2"
         >
-          {/* Certificate Image - LANDSCAPE SIZE with larger width */}
+          {/* Certificate Image */}
           <div className="relative aspect-[16/6] overflow-hidden bg-gray-100">
             <img
               src={certificate.image}
@@ -625,7 +624,7 @@ const Home = () => {
     </div>
   </div>
 </section>
-      {/* Enhanced Manufacturing Excellence */}
+      {/* Manufacturing Excellence */}
       <section className="py-24 bg-gradient-to-br from-green-900 via-green-800 to-green-700 text-white relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-0 right-0 w-64 h-64 bg-green-600/10 rounded-full blur-3xl"></div>
@@ -682,7 +681,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Enhanced Testimonials */}
+      {/* Testimonials */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -698,7 +697,7 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Enhanced Testimonial Carousel */}
+          {/* Testimonial Carousel */}
           <div className="relative">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
@@ -747,7 +746,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Enhanced Final CTA */}
+      {/* Final CTA */}
       <section className="py-20 bg-gradient-to-r from-green-600 to-green-700 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
@@ -780,7 +779,7 @@ const Home = () => {
             </Link>
           </div>
 
-          {/* Enhanced Contact Info */}
+          {/* Contact Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-green-100">
             <div className="flex items-center justify-center gap-3 bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
               <Phone className="h-5 w-5 text-green-300" />
