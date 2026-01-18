@@ -19,7 +19,7 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [showQuickView, setShowQuickView] = useState(false)
 
-  // Static data with actual prices only - no discounts
+  // Static data with actual prices 
   const products = [
     {
       id: 1,
@@ -175,7 +175,7 @@ const Products = () => {
     }
   ]
 
-  // Company stats for the new section
+  // Company stats 
   const companyStats = [
     { number: '100,000+', label: 'Monthly Production', icon: Factory },
     { number: '50,000+', label: 'Happy Customers', icon: Users },
@@ -183,7 +183,7 @@ const Products = () => {
     { number: '15+', label: 'Years Experience', icon: Clock }
   ]
 
-  // Filter products based on search only
+  // Filter products based on search 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -299,7 +299,7 @@ const Products = () => {
         </div>
       )}
 
-      {/* Enhanced Header */}
+      {/* Header */}
       <div className="bg-white border-b border-green-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
@@ -318,7 +318,7 @@ const Products = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Enhanced Search Section */}
+        {/* Search Section */}
         <div className="mb-12">
           {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto mb-8">
@@ -341,7 +341,7 @@ const Products = () => {
           </p>
         </div>
 
-        {/* Enhanced Products Grid */}
+        {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredProducts.map((product) => (
             <div
@@ -429,7 +429,7 @@ const Products = () => {
           ))}
         </div>
 
-        {/* No Results State */}
+        
         {filteredProducts.length === 0 && (
           <div className="text-center py-16">
             <div className="text-gray-400 text-6xl mb-4">🔍</div>
@@ -505,7 +505,7 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Enhanced Bulk Order CTA */}
+        {/* Bulk Order CTA */}
         <div className="text-center mt-20">
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-12 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>

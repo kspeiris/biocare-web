@@ -227,7 +227,7 @@ const Inquire = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Enhanced Header */}
+        {/* Header */}
         <div className="text-center mb-12 fade-in">
           <div className="flex justify-center mb-6">
             <div className="bg-green-600 p-4 rounded-2xl shadow-lg">
@@ -260,7 +260,7 @@ const Inquire = () => {
           </div>
         </div>
 
-        {/* Enhanced Inquiry Form */}
+        {/* Inquiry Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 fade-in border border-green-100">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Personal Information */}
