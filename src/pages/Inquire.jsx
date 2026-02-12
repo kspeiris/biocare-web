@@ -41,14 +41,14 @@ const Inquire = () => {
   }, [location.search])
 
   const products = [
-    { id: 1, name: 'Aloe Vera Drink', category: 'Digestive Health', price: 'LKR 450' },
-    { id: 2, name: 'Wood Apple Squash', category: 'Natural Cleanser', price: 'LKR 380' },
-    { id: 3, name: 'Tamarind Drink', category: 'Antioxidant', price: 'LKR 290' },
-    { id: 4, name: 'Mixed Fruit Blend', category: 'Vitamin Rich', price: 'LKR 320' },
-    { id: 5, name: 'Mango Delight', category: 'Fruit Drink', price: 'LKR 270' },
-    { id: 6, name: 'Bael Fruit Elixir', category: 'Functional', price: 'LKR 410' },
-    { id: 7, name: 'Ginco Powder', category: 'Medicinal', price: 'LKR 520' },
-    { id: 8, name: 'Passion Fruit Mix', category: 'Tropical', price: 'LKR 340' }
+    { id: 1, name: 'Aloe Vera Drink', category: 'Digestive Health', price: 'LKR 150' },
+    { id: 2, name: 'Wood Apple Squash', category: 'Natural Cleanser', price: 'LKR 150' },
+    { id: 3, name: 'Tamarind Drink', category: 'Antioxidant', price: 'LKR 150' },
+    { id: 4, name: 'Mixed Fruit Blend', category: 'Vitamin Rich', price: 'LKR 150' },
+    { id: 5, name: 'Mango Delight', category: 'Fruit Drink', price: 'LKR 150' },
+    { id: 6, name: 'Bael Fruit Elixir', category: 'Functional', price: 'LKR 150' },
+    { id: 7, name: 'Ginco Powder', category: 'Medicinal', price: 'LKR 150' },
+    { id: 8, name: 'Passion Fruit Mix', category: 'Tropical', price: 'LKR 150' }
   ]
 
   const businessTypes = [

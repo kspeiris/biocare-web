@@ -45,7 +45,7 @@ const Home = () => {
       name: 'Aloe Vera Drink',
       category: 'Digestive Health',
       image:"/alovera.png",
-      price: 'LKR 450',
+      price: 'LKR 150',
       rating: 4.8,
       reviews: 124,
       tag: 'Bestseller',
@@ -61,7 +61,7 @@ const Home = () => {
       name: 'Wood Apple Squash',
       category: 'Natural Cleanser',
       image: '/wood.png',
-      price: 'LKR 380',
+      price: 'LKR 150',
       rating: 4.6,
       reviews: 89,
       tag: 'Traditional',
@@ -77,7 +77,7 @@ const Home = () => {
       name: 'Mixed Fruit Blend',
       category: 'Vitamin Rich',
       image: '/mix.png',
-      price: 'LKR 320',
+      price: 'LKR 150',
       rating: 4.7,
       reviews: 156,
       tag: 'Popular',
@@ -93,7 +93,7 @@ const Home = () => {
       name: 'Tamarind Drink',
       category: 'Antioxidant',
       image: '/termin.png',
-      price: 'LKR 290',
+      price: 'LKR 150',
       rating: 4.5,
       reviews: 67,
       tag: 'Ayurvedic',
@@ -332,16 +332,30 @@ const Home = () => {
           
           {/* Enhanced Logo */}
           <div className="flex justify-center mb-12">
-            <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl transform hover:scale-105 transition-transform duration-300">
-              <div className="bg-gradient-to-r from-green-600 to-green-500 rounded-2xl p-6 flex items-center justify-center shadow-inner">
-                <div className="text-center text-white">
-                  <div className="text-4xl font-black tracking-tight">BIO CARE</div>
-                  <div className="text-sm opacity-90 mt-1 font-medium">Since 2009</div>
-                </div>
+            <div className="group relative inline-flex flex-col items-center">
+              <div className="pointer-events-none absolute -inset-4 rounded-[30px] bg-green-300/20 blur-2xl"></div>
+
+              <div className="relative rounded-2xl border border-white/45 px-7 py-5 sm:px-8 sm:py-6 backdrop-blur-md shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
+                <img
+                  src="/logo.png"
+                  alt="Bio Care logo"
+                  className="h-16 w-auto object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.25)] sm:h-20"
+                  loading="eager"
+                  onError={(e) => {
+                    e.target.style.display = 'none'
+                    e.target.nextElementSibling.style.display = 'block'
+                  }}
+                />
+                <div className="hidden text-center text-3xl font-black tracking-tight text-white">BIO CARE</div>
+              </div>
+
+              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/15 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-green-100 sm:text-xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-300"></span>
+                Natural Wellness Since 2009
               </div>
             </div>
           </div>
-          
+
           {/* Headline */}
           <div className="space-y-6 mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -810,3 +824,5 @@ const Home = () => {
 }
 
 export default Home
+
+

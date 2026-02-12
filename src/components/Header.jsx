@@ -23,12 +23,12 @@ const Header = () => {
           {/* Logo - Rectangular Version */}
           <Link to="/" className="flex items-center space-x-4">
             <div className="flex items-center space-x-4">
-              {/* Rectangular Logo Container */}
-              <div className="bg-green-600 rounded-xl p-3 flex items-center justify-center">
+              {/* Logo container */}
+              <div className="h-16 w-24 sm:w-28 rounded-xl bg-white border border-green-100 shadow-sm p-1 flex items-center justify-center overflow-hidden">
                 <img 
                   src="/logo.png" 
                   alt="Bio Care Logo" 
-                  className="h-12 w-auto max-w-32 object-contain"
+                  className="h-full w-full object-contain"
                   onError={(e) => {
                     
                     e.target.style.display = 'none'

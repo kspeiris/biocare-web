@@ -11,12 +11,12 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center space-x-4 mb-6">
               <div className="flex items-center space-x-4">
-                {/* Rectangular Logo Container */}
-                <div className="bg-green-600 rounded-lg p-2 flex items-center justify-center">
+                {/* Logo Container */}
+                <div className="h-16 w-24 sm:w-28 rounded-xl bg-white/95 border border-green-200 p-1 flex items-center justify-center overflow-hidden shadow-sm">
                   <img 
                     src="/logo.png" 
                     alt="Bio Care Logo" 
-                    className="h-16 w-auto max-w-24 object-contain"
+                    className="h-full w-full object-contain"
                     onError={(e) => {
                       e.target.style.display = 'none'
                       e.target.nextSibling.style.display = 'flex'
