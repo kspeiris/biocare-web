@@ -93,7 +93,7 @@ Scripts (from package.json):
 ## Screenshots
 
 ### Home Page
-![Home Page 1](src/assets/Home1.png)
+![Home Page 1](src/assets/Home.png)
 ![Home Page 2](src/assets/Home2.png)
 ![Home Page 3](src/assets/Home3.png)
 
