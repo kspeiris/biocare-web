@@ -330,32 +330,6 @@ const Home = () => {
         
         <div className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           
-          {/* Enhanced Logo */}
-          <div className="flex justify-center mb-12">
-            <div className="group relative inline-flex flex-col items-center">
-              <div className="pointer-events-none absolute -inset-4 rounded-[30px] bg-green-300/20 blur-2xl"></div>
-
-              <div className="relative rounded-2xl border border-white/45 px-7 py-5 sm:px-8 sm:py-6 backdrop-blur-md shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-                <img
-                  src="/logo.png"
-                  alt="Bio Care logo"
-                  className="h-16 w-auto object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.25)] sm:h-20"
-                  loading="eager"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.nextElementSibling.style.display = 'block'
-                  }}
-                />
-                <div className="hidden text-center text-3xl font-black tracking-tight text-white">BIO CARE</div>
-              </div>
-
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/15 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-green-100 sm:text-xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-300"></span>
-                Natural Wellness Since 2009
-              </div>
-            </div>
-          </div>
-
           {/* Headline */}
           <div className="space-y-6 mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
