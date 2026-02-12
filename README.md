@@ -2,6 +2,8 @@
 
 Pioneering functional beverage production in Sri Lanka — company website and product inquiry portal.
 
+![Hero image](biocarehero.png)
+
 ## Project Overview
 This repository contains the client-side source for the Bio Care company website (biocare-web). It's a React single-page application (SPA) built with Vite and styled with Tailwind CSS. The site provides company information, product listings, contact and inquiry forms for business customers and distributors.
 
