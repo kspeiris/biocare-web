@@ -110,7 +110,7 @@ Scripts (from package.json):
 
 ## Demo 
 
-- Link : https://bio-care-web.netlify.app
+- Link : https://biocare-web.netlify.app/
 
 ## Future Enhancements
 The repository itself does not include an explicit roadmap or TODO list. Suggested next steps (not present in repo — developer decisions):
