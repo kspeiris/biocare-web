@@ -2,6 +2,8 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+RUN npm install -g npm@10.9.3
+
 COPY package.json package-lock.json ./
 
 RUN npm install --no-audit --no-fund
