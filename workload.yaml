@@ -1,0 +1,9 @@
+apiVersion: openchoreo.dev/v1alpha1
+metadata:
+  name: biocare-web
+endpoints:
+  - name: web
+    visibility:
+      - external
+    port: 80
+    type: HTTP
