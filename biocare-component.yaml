@@ -1,0 +1,39 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: Component
+metadata:
+  name: biocare-web
+  namespace: default
+spec:
+  componentType:
+    kind: ClusterComponentType
+    name: deployment/web-application
+
+  owner:
+    projectName: default
+
+  autoBuild: false
+  autoDeploy: false
+
+  parameters:
+    replicas: 1
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  workflow:
+    kind: ClusterWorkflow
+    name: dockerfile-builder
+    parameters:
+      repository:
+        url: https://github.com/kspeiris/biocare-web
+        appPath: .
+        revision:
+          branch: main
+      docker:
+        context: .
+        filePath: ./Dockerfile

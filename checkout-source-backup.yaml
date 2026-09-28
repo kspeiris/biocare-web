@@ -1,0 +1,194 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ClusterWorkflowTemplate
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"argoproj.io/v1alpha1","kind":"ClusterWorkflowTemplate","metadata":{"annotations":{},"name":"checkout-source"},"spec":{"templates":[{"container":{"args":["set -e\n\nGIT_SECRET_PATH=\"/etc/secrets/git-secret\"\n\n# --- Parameter Validation ---\necho \"\u003e\u003e Repository: $REPO\"\necho \"\u003e\u003e Branch: ${BRANCH:-\u003cnot specified\u003e}\"\necho \"\u003e\u003e Commit: ${COMMIT:-\u003cnot specified\u003e}\"\n\nif [ -z \"$REPO\" ]; then\n  echo \"\u003e\u003e Error: Git repository URL is required but was not provided.\"\n  echo \"\u003e\u003e Hint: Ensure a valid git repository URL is configured in your workflow parameters.\"\n  exit 1\nfi\n\nif [ -z \"$COMMIT\" ] \u0026\u0026 [ -z \"$BRANCH\" ]; then\n  echo \"\u003e\u003e Error: Either a branch or commit must be specified.\"\n  echo \"\u003e\u003e Hint: Provide a git branch name or a specific commit SHA in your workflow parameters.\"\n  exit 1\nfi\n\n# Check if git secret exists (for private repositories)\nif [ -d \"$GIT_SECRET_PATH\" ] \u0026\u0026 [ \"$(ls $GIT_SECRET_PATH 2\u003e/dev/null)\" ]; then\n    echo \"\u003e\u003e Configuring repository authentication\"\n\n    # SSH key auth (kubernetes.io/ssh-auth)\n    if [ -f \"$GIT_SECRET_PATH/ssh-privatekey\" ]; then\n        echo \"\u003e\u003e Authentication: SSH Key Authentication\"\n        mkdir -p ~/.ssh\n        chmod 700 ~/.ssh\n\n        # Normalize line endings and copy key\n        tr -d '\\r' \u003c \"$GIT_SECRET_PATH/ssh-privatekey\" \u003e ~/.ssh/id_rsa\n        [ -n \"$(tail -c 1 ~/.ssh/id_rsa)\" ] \u0026\u0026 echo \u003e\u003e ~/.ssh/id_rsa\n        chmod 600 ~/.ssh/id_rsa\n\n        if ! grep -q \"BEGIN.*PRIVATE KEY\" ~/.ssh/id_rsa; then\n            echo \"\u003e\u003e Error: The provided SSH key does not appear to be valid.\"\n            exit 1\n        fi\n\n        if ! ssh-keygen -l -f ~/.ssh/id_rsa \u003e /dev/null 2\u003e\u00261; then\n            echo \"\u003e\u003e Warning: SSH key validation failed with ssh-keygen\"\n            echo \"\u003e\u003e This might indicate key format issues, but attempting to proceed\"\n        fi\n\n        # AWS CodeCommit SSH Key ID\n        SSH_KEY_ID=\"\"\n        if [ -f \"$GIT_SECRET_PATH/ssh-key-id\" ]; then\n            SSH_KEY_ID=$(cat \"$GIT_SECRET_PATH/ssh-key-id\")\n        fi\n\n        cat \u003e ~/.ssh/config \u003c\u003cEOF\nHost github.com\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\nHost gitlab.com\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\nHost bitbucket.org\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\nHost git-codecommit.*.amazonaws.com\n    StrictHostKeyChecking no\n    UserKnownHostsFile /dev/null\nEOF\n        chmod 600 ~/.ssh/config\n\n        if echo \"$REPO\" | grep -q \"^ssh://.*git-codecommit\"; then\n            if [ -n \"$SSH_KEY_ID\" ] \u0026\u0026 ! echo \"$REPO\" | grep -q \"@\"; then\n                REPO=$(echo \"$REPO\" | sed \"s|ssh://|ssh://${SSH_KEY_ID}@|\")\n            fi\n        elif echo \"$REPO\" | grep -q \"^https://\" \u0026\u0026 ! echo \"$REPO\" | grep -q \"git-codecommit\"; then\n            REPO=$(echo \"$REPO\" | sed -E 's|https://([^/]+)/(.+)\\.git|git@\\1:\\2.git|')\n        fi\n\n    # Basic auth (kubernetes.io/basic-auth)\n    elif [ -f \"$GIT_SECRET_PATH/password\" ]; then\n        echo \"\u003e\u003e Authentication: Basic Authentication\"\n\n        if ! echo \"$REPO\" | grep -q \"^https://\"; then\n            echo \"\u003e\u003e Warning: REPO is not an HTTPS URL, basic auth may not work\"\n        fi\n\n        # Supply credentials via GIT_ASKPASS instead of embedding them in the\n        # clone URL. The helper reads the mounted secret on demand.\n        export GIT_SECRET_PATH\n        cat \u003e /tmp/git-askpass.sh \u003c\u003c'EOF'\n#!/bin/sh\ncase \"$1\" in\n    Username*) cat \"$GIT_SECRET_PATH/username\" 2\u003e/dev/null || echo git ;;\n    Password*) cat \"$GIT_SECRET_PATH/password\" ;;\nesac\nEOF\n        chmod 700 /tmp/git-askpass.sh\n        export GIT_ASKPASS=/tmp/git-askpass.sh\n        export GIT_TERMINAL_PROMPT=0\n    else\n        echo \"\u003e\u003e Error: Git credentials secret was provided but does not contain recognized authentication data.\"\n        echo \"\u003e\u003e Hint: The secret should contain either an SSH private key (ssh-privatekey) or username/password.\"\n        exit 1\n    fi\nelse\n    echo \"\u003e\u003e Authentication: none (public repository)\"\nfi\n\nif [ -n \"$COMMIT\" ]; then\n    git clone --no-checkout --depth 1 -- \"$REPO\" /mnt/vol/source\n    cd /mnt/vol/source\n    git config --global advice.detachedHead false\n    git fetch --depth 1 origin \"$COMMIT\"\n    git checkout \"$COMMIT\"\n    # git-revision keeps feeding the image tag, so it stays derived from\n    # the requested $COMMIT exactly as before. COMMIT_SHA below is the\n    # canonicalized SHA and is only used for provenance.\n    echo -n \"$COMMIT\" | cut -c1-8 \u003e /tmp/git-revision.txt\n    COMMIT_SHA=$(git rev-parse HEAD)\n    # Detached checkout of one commit: the branch parameter was never\n    # used, and a commit can live on any number of branches, so there\n    # is no branch to attribute this build to.\n    SOURCE_BRANCH=\"\"\n    echo \"\u003e\u003e Checked out commit: $COMMIT\"\nelse\n    git clone --single-branch --branch \"$BRANCH\" --depth 1 -- \"$REPO\" /mnt/vol/source\n    cd /mnt/vol/source\n    COMMIT_SHA=$(git rev-parse HEAD)\n    echo -n \"$COMMIT_SHA\" | cut -c1-8 \u003e /tmp/git-revision.txt\n    SOURCE_BRANCH=\"$BRANCH\"\n    echo \"\u003e\u003e Checked out branch: $BRANCH (commit: $COMMIT_SHA)\"\nfi\n\n# Full resolved commit SHA and author timestamp, for WorkloadSource\n# provenance (consumed by the generate-workload step).\nCOMMIT_AUTHORED_AT=$(git show -s --format=%aI HEAD)\necho -n \"$COMMIT_SHA\" \u003e /tmp/commit-sha.txt\necho -n \"$COMMIT_AUTHORED_AT\" \u003e /tmp/commit-authored-at.txt\necho -n \"$SOURCE_BRANCH\" \u003e /tmp/source-branch.txt\n\necho \"\u003e\u003e Repository cloned successfully\"\necho \"\u003e\u003e Source directory contents:\"\nls -la /mnt/vol/source/"],"command":["sh","-c"],"env":[{"name":"BRANCH","value":"{{workflow.parameters.branch}}"},{"name":"REPO","value":"{{workflow.parameters.git-repo}}"},{"name":"COMMIT","value":"{{workflow.parameters.commit}}"}],"image":"alpine/git:v2.52.0","volumeMounts":[{"mountPath":"/mnt/vol","name":"workspace"},{"mountPath":"/etc/secrets/git-secret","name":"git-secret","readOnly":true}]},"name":"checkout","outputs":{"parameters":[{"name":"git-revision","valueFrom":{"path":"/tmp/git-revision.txt"}},{"name":"commit-sha","valueFrom":{"path":"/tmp/commit-sha.txt"}},{"name":"commit-authored-at","valueFrom":{"path":"/tmp/commit-authored-at.txt"}},{"name":"source-branch","valueFrom":{"path":"/tmp/source-branch.txt"}}]},"volumes":[{"name":"git-secret","secret":{"optional":true,"secretName":"{{workflow.parameters.git-secret}}"}}]}]}}
+  creationTimestamp: "2026-09-25T06:49:53Z"
+  generation: 1
+  name: checkout-source
+  resourceVersion: "19465"
+  uid: 0b2109d6-f922-4b31-b786-96466a17c840
+spec:
+  templates:
+  - container:
+      args:
+      - |-
+        set -e
+
+        GIT_SECRET_PATH="/etc/secrets/git-secret"
+
+        # --- Parameter Validation ---
+        echo ">> Repository: $REPO"
+        echo ">> Branch: ${BRANCH:-<not specified>}"
+        echo ">> Commit: ${COMMIT:-<not specified>}"
+
+        if [ -z "$REPO" ]; then
+          echo ">> Error: Git repository URL is required but was not provided."
+          echo ">> Hint: Ensure a valid git repository URL is configured in your workflow parameters."
+          exit 1
+        fi
+
+        if [ -z "$COMMIT" ] && [ -z "$BRANCH" ]; then
+          echo ">> Error: Either a branch or commit must be specified."
+          echo ">> Hint: Provide a git branch name or a specific commit SHA in your workflow parameters."
+          exit 1
+        fi
+
+        # Check if git secret exists (for private repositories)
+        if [ -d "$GIT_SECRET_PATH" ] && [ "$(ls $GIT_SECRET_PATH 2>/dev/null)" ]; then
+            echo ">> Configuring repository authentication"
+
+            # SSH key auth (kubernetes.io/ssh-auth)
+            if [ -f "$GIT_SECRET_PATH/ssh-privatekey" ]; then
+                echo ">> Authentication: SSH Key Authentication"
+                mkdir -p ~/.ssh
+                chmod 700 ~/.ssh
+
+                # Normalize line endings and copy key
+                tr -d '\r' < "$GIT_SECRET_PATH/ssh-privatekey" > ~/.ssh/id_rsa
+                [ -n "$(tail -c 1 ~/.ssh/id_rsa)" ] && echo >> ~/.ssh/id_rsa
+                chmod 600 ~/.ssh/id_rsa
+
+                if ! grep -q "BEGIN.*PRIVATE KEY" ~/.ssh/id_rsa; then
+                    echo ">> Error: The provided SSH key does not appear to be valid."
+                    exit 1
+                fi
+
+                if ! ssh-keygen -l -f ~/.ssh/id_rsa > /dev/null 2>&1; then
+                    echo ">> Warning: SSH key validation failed with ssh-keygen"
+                    echo ">> This might indicate key format issues, but attempting to proceed"
+                fi
+
+                # AWS CodeCommit SSH Key ID
+                SSH_KEY_ID=""
+                if [ -f "$GIT_SECRET_PATH/ssh-key-id" ]; then
+                    SSH_KEY_ID=$(cat "$GIT_SECRET_PATH/ssh-key-id")
+                fi
+
+                cat > ~/.ssh/config <<EOF
+        Host github.com
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+        Host gitlab.com
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+        Host bitbucket.org
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+        Host git-codecommit.*.amazonaws.com
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+        EOF
+                chmod 600 ~/.ssh/config
+
+                if echo "$REPO" | grep -q "^ssh://.*git-codecommit"; then
+                    if [ -n "$SSH_KEY_ID" ] && ! echo "$REPO" | grep -q "@"; then
+                        REPO=$(echo "$REPO" | sed "s|ssh://|ssh://${SSH_KEY_ID}@|")
+                    fi
+                elif echo "$REPO" | grep -q "^https://" && ! echo "$REPO" | grep -q "git-codecommit"; then
+                    REPO=$(echo "$REPO" | sed -E 's|https://([^/]+)/(.+)\.git|git@\1:\2.git|')
+                fi
+
+            # Basic auth (kubernetes.io/basic-auth)
+            elif [ -f "$GIT_SECRET_PATH/password" ]; then
+                echo ">> Authentication: Basic Authentication"
+
+                if ! echo "$REPO" | grep -q "^https://"; then
+                    echo ">> Warning: REPO is not an HTTPS URL, basic auth may not work"
+                fi
+
+                # Supply credentials via GIT_ASKPASS instead of embedding them in the
+                # clone URL. The helper reads the mounted secret on demand.
+                export GIT_SECRET_PATH
+                cat > /tmp/git-askpass.sh <<'EOF'
+        #!/bin/sh
+        case "$1" in
+            Username*) cat "$GIT_SECRET_PATH/username" 2>/dev/null || echo git ;;
+            Password*) cat "$GIT_SECRET_PATH/password" ;;
+        esac
+        EOF
+                chmod 700 /tmp/git-askpass.sh
+                export GIT_ASKPASS=/tmp/git-askpass.sh
+                export GIT_TERMINAL_PROMPT=0
+            else
+                echo ">> Error: Git credentials secret was provided but does not contain recognized authentication data."
+                echo ">> Hint: The secret should contain either an SSH private key (ssh-privatekey) or username/password."
+                exit 1
+            fi
+        else
+            echo ">> Authentication: none (public repository)"
+        fi
+
+        if [ -n "$COMMIT" ]; then
+            git clone --no-checkout --depth 1 -- "$REPO" /mnt/vol/source
+            cd /mnt/vol/source
+            git config --global advice.detachedHead false
+            git fetch --depth 1 origin "$COMMIT"
+            git checkout "$COMMIT"
+            # git-revision keeps feeding the image tag, so it stays derived from
+            # the requested $COMMIT exactly as before. COMMIT_SHA below is the
+            # canonicalized SHA and is only used for provenance.
+            echo -n "$COMMIT" | cut -c1-8 > /tmp/git-revision.txt
+            COMMIT_SHA=$(git rev-parse HEAD)
+            # Detached checkout of one commit: the branch parameter was never
+            # used, and a commit can live on any number of branches, so there
+            # is no branch to attribute this build to.
+            SOURCE_BRANCH=""
+            echo ">> Checked out commit: $COMMIT"
+        else
+            git clone --single-branch --branch "$BRANCH" --depth 1 -- "$REPO" /mnt/vol/source
+            cd /mnt/vol/source
+            COMMIT_SHA=$(git rev-parse HEAD)
+            echo -n "$COMMIT_SHA" | cut -c1-8 > /tmp/git-revision.txt
+            SOURCE_BRANCH="$BRANCH"
+            echo ">> Checked out branch: $BRANCH (commit: $COMMIT_SHA)"
+        fi
+
+        # Full resolved commit SHA and author timestamp, for WorkloadSource
+        # provenance (consumed by the generate-workload step).
+        COMMIT_AUTHORED_AT=$(git show -s --format=%aI HEAD)
+        echo -n "$COMMIT_SHA" > /tmp/commit-sha.txt
+        echo -n "$COMMIT_AUTHORED_AT" > /tmp/commit-authored-at.txt
+        echo -n "$SOURCE_BRANCH" > /tmp/source-branch.txt
+
+        echo ">> Repository cloned successfully"
+        echo ">> Source directory contents:"
+        ls -la /mnt/vol/source/
+      command:
+      - sh
+      - -c
+      env:
+      - name: BRANCH
+        value: '{{workflow.parameters.branch}}'
+      - name: REPO
+        value: '{{workflow.parameters.git-repo}}'
+      - name: COMMIT
+        value: '{{workflow.parameters.commit}}'
+      image: alpine/git:v2.52.0
+      volumeMounts:
+      - mountPath: /mnt/vol
+        name: workspace
+      - mountPath: /etc/secrets/git-secret
+        name: git-secret
+        readOnly: true
+    name: checkout
+    outputs:
+      parameters:
+      - name: git-revision
+        valueFrom:
+          path: /tmp/git-revision.txt
+      - name: commit-sha
+        valueFrom:
+          path: /tmp/commit-sha.txt
+      - name: commit-authored-at
+        valueFrom:
+          path: /tmp/commit-authored-at.txt
+      - name: source-branch
+        valueFrom:
+          path: /tmp/source-branch.txt
+    volumes:
+    - name: git-secret
+      secret:
+        optional: true
+        secretName: '{{workflow.parameters.git-secret}}'

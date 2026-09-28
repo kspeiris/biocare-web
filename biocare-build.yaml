@@ -1,0 +1,21 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: WorkflowRun
+metadata:
+  name: biocare-web-build-02
+  namespace: default
+  labels:
+    openchoreo.dev/project: default
+    openchoreo.dev/component: biocare-web
+spec:
+  workflow:
+    kind: ClusterWorkflow
+    name: dockerfile-builder
+    parameters:
+      repository:
+        url: https://github.com/kspeiris/biocare-web
+        appPath: .
+        revision:
+          branch: main
+      docker:
+        context: .
+        filePath: ./Dockerfile
